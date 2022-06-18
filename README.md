@@ -1,7 +1,7 @@
 ## Sesame
 This package provides a client to the Sesame API.
 
-This package brakeman system to lock the keys of Sesame API using signatures encrypted with the AES-CMAC method.
+This package API Client to lock the keys of Sesame API using signatures encrypted with the AES-CMAC method.
 
 For more information about the API, please see the official documentation.
 
