@@ -9,6 +9,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"time"
 
@@ -56,6 +57,47 @@ func NewClient(apiKey, secretKey, deviseUUID string) *Client {
 		URL:        baseURL,
 	}
 	return &cli
+}
+
+type Sesame struct {
+	BatteryPercentage uint8   `json:"batteryPercentage"`
+	BatteryVoltage    float64 `json:"batteryVoltage"`
+	Position          uint16  `json:"position"`
+	CHSesame2Status   string  `json:"chSesame2Status"`
+	TimeStamp         uint32  `json:"timeStamp"`
+}
+
+// Device Get the current status of the Sesame device
+func (client *Client) Device(ctx context.Context) (*Sesame, error) {
+	var s Sesame
+	req, err := http.NewRequest("GET", "https://app.candyhouse.co/api/sesame2/"+client.DeviseUUID, nil)
+	if err != nil {
+		return nil, err
+	}
+	req = req.WithContext(ctx)
+	req.Header.Set("x-api-key", client.APIKey)
+
+	resp, err := client.HTTPClient.Do(req)
+	if err != nil {
+		return nil, err
+	}
+	defer resp.Body.Close()
+
+	if !(resp.StatusCode >= http.StatusOK && resp.StatusCode < http.StatusMultipleChoices) {
+		return nil, &APIError{StatusCode: resp.StatusCode}
+	}
+
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return nil, err
+	}
+
+	err = json.Unmarshal([]byte(body), &s)
+	if err != nil {
+		return nil, err
+	}
+
+	return &s, err
 }
 
 func (client *Client) signature() (string, error) {
