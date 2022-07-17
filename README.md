@@ -1,4 +1,7 @@
 ## Sesame
+
+[![Go Reference](https://pkg.go.dev/badge/github.com/NerdyBoyCool/sesame.svg)](https://pkg.go.dev/github.com/NerdyBoyCool/sesame)
+
 This package provides a client to the Sesame API.
 
 This package API Client to lock the keys of Sesame API using signatures encrypted with the AES-CMAC method.
